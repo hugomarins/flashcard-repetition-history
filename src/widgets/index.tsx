@@ -7,7 +7,7 @@ import {
 } from '@remnote/plugin-sdk';
 
 async function onActivate(plugin: ReactRNPlugin) {
-	await plugin.app.registerWidget('ratingHistory', WidgetLocation.CardToolbar, {
+	await plugin.app.registerWidget('ratingHistory', WidgetLocation.FlashcardUnder, {
 		dimensions: {
 			width: '100%',
 			height: '25rem',
