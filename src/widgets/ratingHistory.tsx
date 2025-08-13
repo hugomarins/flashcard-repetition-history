@@ -68,18 +68,15 @@ function formatInterval(ms: number): string {
 
 	const totalDays = Math.round(ms / MS_IN_DAY);
 
-	// Handle pluralization easily
-	const plural = (count: number, singular: string) => (count === 1 ? singular : `${singular}s`);
-
 	// Rule 3: More than a year
 	if (totalDays >= DAYS_IN_YEAR) {
 		const years = Math.floor(totalDays / DAYS_IN_YEAR);
 		const remainingDays = totalDays % DAYS_IN_YEAR;
 		const months = Math.floor(remainingDays / DAYS_IN_MONTH);
 
-		let result = `${years} ${plural(years, 'year')}`;
+		let result = `${years}y`;
 		if (months > 0) {
-			result += `, ${months} ${plural(months, 'month')}`;
+			result += ` ${months}m`;
 		}
 		return result;
 	}
@@ -89,15 +86,15 @@ function formatInterval(ms: number): string {
 		const months = Math.floor(totalDays / DAYS_IN_MONTH);
 		const remainingDays = Math.round(totalDays % DAYS_IN_MONTH);
 
-		let result = `${months} ${plural(months, 'month')}`;
+		let result = `${months}m`;
 		if (remainingDays > 0) {
-			result += `, ${remainingDays} ${plural(remainingDays, 'day')}`;
+			result += ` ${remainingDays}d`;
 		}
 		return result;
 	}
 
 	// Rule 1: Up to a month
-	return `${totalDays} ${plural(totalDays, 'day')}`;
+	return `${totalDays}d`;
 }
 
 function RatingHistoryWidget() {
