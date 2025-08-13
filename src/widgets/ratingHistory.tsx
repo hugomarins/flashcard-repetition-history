@@ -60,6 +60,46 @@ function scoreToColorClassMatch(score: number) {
 	return 'highlight-color--' + stringColor;
 }
 
+function formatInterval(ms: number): string {
+	const MS_IN_DAY = 1000 * 60 * 60 * 24;
+	// Using approximations for simplicity in display
+	const DAYS_IN_MONTH = 30.44; // Average days in a month
+	const DAYS_IN_YEAR = 365.25; // Accounts for leap years
+
+	const totalDays = Math.round(ms / MS_IN_DAY);
+
+	// Handle pluralization easily
+	const plural = (count: number, singular: string) => (count === 1 ? singular : `${singular}s`);
+
+	// Rule 3: More than a year
+	if (totalDays >= DAYS_IN_YEAR) {
+		const years = Math.floor(totalDays / DAYS_IN_YEAR);
+		const remainingDays = totalDays % DAYS_IN_YEAR;
+		const months = Math.floor(remainingDays / DAYS_IN_MONTH);
+
+		let result = `${years} ${plural(years, 'year')}`;
+		if (months > 0) {
+			result += `, ${months} ${plural(months, 'month')}`;
+		}
+		return result;
+	}
+
+	// Rule 2: More than a month, but up to a year
+	if (totalDays > 30) {
+		const months = Math.floor(totalDays / DAYS_IN_MONTH);
+		const remainingDays = Math.round(totalDays % DAYS_IN_MONTH);
+
+		let result = `${months} ${plural(months, 'month')}`;
+		if (remainingDays > 0) {
+			result += `, ${remainingDays} ${plural(remainingDays, 'day')}`;
+		}
+		return result;
+	}
+
+	// Rule 1: Up to a month
+	return `${totalDays} ${plural(totalDays, 'day')}`;
+}
+
 function RatingHistoryWidget() {
 	const plugin = usePlugin();
 
@@ -123,14 +163,12 @@ function RatingHistoryWidget() {
 											<h4 className="widget-title">Practice Date</h4>
 										</div>
 										{history.scheduled && (
-											<div className="widget-item">
-												<p className="widget-value">
-													{new Date(
-														history.scheduled
-													).toLocaleDateString()}
-												</p>
-												<h4 className="widget-title">Next Interval</h4>
-											</div>
+  											  <div className="widget-item">
+     											   <p className="widget-value">
+        										    {formatInterval(history.scheduled - history.date)}
+    											    </p>
+    								 			   <h4 className="widget-title">Next Interval</h4>
+ 											   </div>
 										)}
 									</div>
 								</span>
