@@ -121,17 +121,28 @@ function RatingHistoryWidget() {
 	// --- Calculations for the "Current Repetition" Bonus Box ---
 	let currentIntervalMs = 0;
 	let currentDelayMs = 0;
+	let totalReviews = 0;
+	let totalReviewTimeMs = 0;
 
-	// This check ensures we only calculate if the card is actually scheduled for review.
-	if (card.nextRepetitionTime && card.repetitionHistory && card.repetitionHistory.length > 0) {
-		const lastHistory = card.repetitionHistory[card.repetitionHistory.length - 1];
-		// This is the interval that led to the current scheduled review.
-		currentIntervalMs = card.nextRepetitionTime - lastHistory.date;
+	if (card.repetitionHistory && card.repetitionHistory.length > 0) {
+		// --- NEW: Calculate summary stats ---
+		totalReviews = card.repetitionHistory.length;
+		totalReviewTimeMs = card.repetitionHistory.reduce(
+			(sum, history) => sum + history.responseTime,
+			0
+		);
 
-		// This is the current delay if the card is overdue.
-		const now = new Date().getTime();
-		if (now > card.nextRepetitionTime) {
-			currentDelayMs = now - card.nextRepetitionTime;
+		// This check ensures we only calculate if the card is actually scheduled for review.
+		if (card.nextRepetitionTime) {
+			const lastHistory = card.repetitionHistory[card.repetitionHistory.length - 1];
+			// This is the interval that led to the current scheduled review.
+			currentIntervalMs = card.nextRepetitionTime - lastHistory.date;
+
+			// This is the current delay if the card is overdue.
+			const now = new Date().getTime();
+			if (now > card.nextRepetitionTime) {
+				currentDelayMs = now - card.nextRepetitionTime;
+			}
 		}
 	}
 
@@ -167,7 +178,6 @@ function RatingHistoryWidget() {
 								<div className={`tooltip square ${className}`} key={history.date}>
 									<span className="tooltiptext">
 										<div className="widget-container">
-											{/* ... All the other widget items for past reviews ... */}
 											<div className="widget-item">
 												<p className="widget-value">
 													{scoreToStringClassMatch(history.score, true)}
@@ -216,6 +226,18 @@ function RatingHistoryWidget() {
 						<div className="tooltip square square-current">
 							<span className="tooltiptext">
 								<div className="widget-container">
+									{/* Total Nr of Reviews */}
+									<div className="widget-item">
+										<p className="widget-value">{totalReviews}</p>
+										<h4 className="widget-title">Total Reviews</h4>
+									</div>
+									{/* Total Review Time */}
+									<div className="widget-item">
+										<p className="widget-value">
+											{`${Math.round(totalReviewTimeMs / (1000 * 60))} min`}
+										</p>
+										<h4 className="widget-title">Total Review Time</h4>
+									</div>
 									{/* Current Interval */}
 									{currentIntervalMs > 0 && (
 										<div className="widget-item">
