@@ -31,6 +31,11 @@ body.dark {
 	border-radius: 8px;
 	width: max-content;
 	padding: 5px;
+	transition: padding-bottom 0.2s ease-out;
+}
+
+#legend:has(.tooltip:hover) {
+	padding-bottom: 280px;
 }
 
 #legend-container {
