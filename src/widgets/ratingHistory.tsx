@@ -104,23 +104,21 @@ function RatingHistoryWidget() {
 	const plugin = usePlugin();
 
 	const [loading, setLoading] = useState(true);
-	// NOTE: The 'inherit-from-highlight-colors' logic is commented out in the original code,
-	// so I'm omitting it here for clarity. You can add it back if you use it.
 
-	const repetitionHistory = useRunAsync(async () => {
+	// Fetch the entire card object now, not just the history.
+	const card = useRunAsync(async () => {
 		const widgetContext = await plugin.widget.getWidgetContext<WidgetLocation.FlashcardUnder>();
-		if (!widgetContext?.cardId) return;
-		const card = await plugin.card.findOne(widgetContext.cardId);
-		return card?.repetitionHistory;
+		if (!widgetContext?.cardId) return null;
+		return await plugin.card.findOne(widgetContext.cardId);
 	}, []);
 
 	useEffect(() => {
-		if (repetitionHistory) {
+		if (card) {
 			setLoading(false);
 		}
-	}, [repetitionHistory]);
+	}, [card]);
 
-	if (loading || !repetitionHistory) {
+	if (loading || !card || !card.repetitionHistory) {
 		return <></>;
 	}
 
@@ -128,14 +126,27 @@ function RatingHistoryWidget() {
 		<div id="legend-container">
 			<div id="legend">
 				<div id="squares">
-					{/* For each repetition history, build a square accordingly */}
-					{repetitionHistory.map((history, index, array) => {
+					{card.repetitionHistory.map((history, index, array) => {
 						const className = scoreToColorClassMatch(history.score);
 
-						// The next item in the history array.
-						const nextHistory = array[index + 1];
+						// --- NEW LOGIC FOR NEXT INTERVAL ---
+						let nextIntervalMs = 0;
+						const isLastReview = index === array.length - 1;
 
-						// Calculate review delay (only if it was scheduled).
+						if (isLastReview) {
+							// For the last review, use the card's nextRepetitionTime property.
+							if (card.nextRepetitionTime) {
+								nextIntervalMs = card.nextRepetitionTime - history.date;
+							}
+						} else {
+							// For all previous reviews, look at the next item in the history.
+							const nextHistory = array[index + 1];
+							if (nextHistory && nextHistory.scheduled) {
+								nextIntervalMs = nextHistory.scheduled - history.date;
+							}
+						}
+
+						// Calculate review delay.
 						const reviewDelayMs =
 							history.scheduled && history.date > history.scheduled
 								? history.date - history.scheduled
@@ -145,21 +156,19 @@ function RatingHistoryWidget() {
 							<div className={`tooltip square ${className}`} key={history.date}>
 								<span className="tooltiptext">
 									<div className="widget-container">
-										{/* Pressed Button */}
-										<div className="widget-item">
+										{/* ... (other widget items like Pressed, Response Time remain the same) ... */}
+                                        <div className="widget-item">
 											<p className="widget-value">
 												{scoreToStringClassMatch(history.score, true)}
 											</p>
 											<h4 className="widget-title">Pressed</h4>
 										</div>
-										{/* Response Time */}
 										<div className="widget-item">
 											<p className="widget-value">
 												{Math.round(history.responseTime / 1000)} seconds
 											</p>
 											<h4 className="widget-title">Response Time</h4>
 										</div>
-										{/* Practice Date */}
 										<div className="widget-item">
 											<p className="widget-value">
 												{new Date(history.date).toLocaleDateString(
@@ -169,19 +178,19 @@ function RatingHistoryWidget() {
 											</p>
 											<h4 className="widget-title">Practice Date</h4>
 										</div>
-										{/* --- CORRECTED "NEXT INTERVAL" LOGIC --- */}
-										{nextHistory && nextHistory.scheduled && (
+
+										{/* Unified "Next Interval" display */}
+										{nextIntervalMs > 0 && (
 											<div className="widget-item">
 												<p className="widget-value">
-													{formatInterval(
-														nextHistory.scheduled - history.date
-													)}
+													{formatInterval(nextIntervalMs)}
 												</p>
 												<h4 className="widget-title">Next Interval</h4>
 											</div>
 										)}
-										{/* --- BONUS "REVIEW DELAY" LOGIC --- */}
-										{reviewDelayMs > 1000 * 60 * 60 && ( // Only show if delay > 1 hour
+
+										{/* "Review Delay" display */}
+										{reviewDelayMs > 1000 * 60 * 60 && (
 											<div className="widget-item">
 												<p className="widget-value">
 													{formatInterval(reviewDelayMs)}
