@@ -128,3 +128,7 @@ body.dark {
 	font-size: 16px; /* REVISED: Made value font smaller */
 	color: var(--rn-clr-content-primary);
 }
+
+div[data-widget-id='ratingHistory'] {
+	flex-shrink: 0 !important;
+}
