@@ -129,6 +129,6 @@ body.dark {
 	color: var(--rn-clr-content-primary);
 }
 
-div[data-widget-id='ratingHistory'] {
+div:has(> #legend-container) {
 	flex-shrink: 0 !important;
 }
