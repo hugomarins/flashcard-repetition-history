@@ -129,6 +129,4 @@ body.dark {
 	color: var(--rn-clr-content-primary);
 }
 
-div:has(> #legend-container) {
-	flex-shrink: 0 !important;
-}
+
