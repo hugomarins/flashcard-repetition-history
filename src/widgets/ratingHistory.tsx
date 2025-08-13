@@ -5,8 +5,11 @@ import {
 	renderWidget,
 	usePlugin,
 	useRunAsync,
+	usePortal,
 } from '@remnote/plugin-sdk';
 import './../App.css';
+
+
 
 enum Score {
 	Forgot = 0,
@@ -97,10 +100,13 @@ function formatInterval(ms: number): string {
 	return `${totalDays}d`;
 }
 
+
+
 function RatingHistoryWidget() {
 	const plugin = usePlugin();
-
+	const portal = usePortal(); // The portal hook for rendering on the top layer.
 	const [loading, setLoading] = useState(true);
+	const [activeTooltip, setActiveTooltip] = useState<number | string | null>(null); // State to track the visible tooltip.
 
 	const card = useRunAsync(async () => {
 		const widgetContext = await plugin.widget.getWidgetContext<WidgetLocation.FlashcardUnder>();
@@ -118,27 +124,23 @@ function RatingHistoryWidget() {
 		return <></>;
 	}
 
-	// --- Calculations for the "Current Repetition" Bonus Box ---
+	// Calculations for the "Current Repetition" Bonus Box
 	let currentIntervalMs = 0;
 	let currentDelayMs = 0;
 	let totalReviews = 0;
 	let totalReviewTimeMs = 0;
 
 	if (card.repetitionHistory && card.repetitionHistory.length > 0) {
-		// --- NEW: Calculate summary stats ---
 		totalReviews = card.repetitionHistory.length;
 		totalReviewTimeMs = card.repetitionHistory.reduce(
 			(sum, history) => sum + history.responseTime,
 			0
 		);
 
-		// This check ensures we only calculate if the card is actually scheduled for review.
 		if (card.nextRepetitionTime) {
 			const lastHistory = card.repetitionHistory[card.repetitionHistory.length - 1];
-			// This is the interval that led to the current scheduled review.
 			currentIntervalMs = card.nextRepetitionTime - lastHistory.date;
 
-			// This is the current delay if the card is overdue.
 			const now = new Date().getTime();
 			if (now > card.nextRepetitionTime) {
 				currentDelayMs = now - card.nextRepetitionTime;
@@ -150,7 +152,7 @@ function RatingHistoryWidget() {
 		<div id="legend-container">
 			<div id="legend">
 				<div id="squares">
-					{/* This maps all the PAST repetitions */}
+					{/* Maps all the PAST repetitions */}
 					{card.repetitionHistory &&
 						card.repetitionHistory.map((history, index, array) => {
 							const className = scoreToColorClassMatch(history.score);
@@ -175,98 +177,127 @@ function RatingHistoryWidget() {
 									: 0;
 
 							return (
-								<div className={`tooltip square ${className}`} key={history.date}>
-									<span className="tooltiptext">
-										<div className="widget-container">
-											<div className="widget-item">
-												<p className="widget-value">
-													{scoreToStringClassMatch(history.score, true)}
-												</p>
-												<h4 className="widget-title">Pressed</h4>
-											</div>
-											<div className="widget-item">
-												<p className="widget-value">
-													{Math.round(history.responseTime / 1000)}s
-												</p>
-												<h4 className="widget-title">Response Time</h4>
-											</div>
-											<div className="widget-item">
-												<p className="widget-value">
-													{new Date(history.date).toLocaleDateString(
-														undefined,
-														{ timeZone: 'UTC' }
+								<div
+									className={`tooltip square ${className}`}
+									key={history.date}
+									onMouseEnter={() => setActiveTooltip(history.date)}
+									onMouseLeave={() => setActiveTooltip(null)}
+								>
+									{/* The tooltip is now rendered conditionally in the portal */}
+									{activeTooltip === history.date &&
+										portal(
+											<span
+												className="tooltiptext"
+												style={{ visibility: 'visible', opacity: 1 }}
+											>
+												<div className="widget-container">
+													<div className="widget-item">
+														<p className="widget-value">
+															{scoreToStringClassMatch(
+																history.score,
+																true
+															)}
+														</p>
+														<h4 className="widget-title">Pressed</h4>
+													</div>
+													<div className="widget-item">
+														<p className="widget-value">
+															{Math.round(history.responseTime / 1000)}s
+														</p>
+														<h4 className="widget-title">
+															Response Time
+														</h4>
+													</div>
+													<div className="widget-item">
+														<p className="widget-value">
+															{new Date(
+																history.date
+															).toLocaleDateString(undefined, {
+																timeZone: 'UTC',
+															})}
+														</p>
+														<h4 className="widget-title">Practice Date</h4>
+													</div>
+													{nextIntervalMs > 0 && (
+														<div className="widget-item">
+															<p className="widget-value">
+																{formatInterval(nextIntervalMs)}
+															</p>
+															<h4 className="widget-title">
+																Next Interval
+															</h4>
+														</div>
 													)}
-												</p>
-												<h4 className="widget-title">Practice Date</h4>
-											</div>
-											{nextIntervalMs > 0 && (
-												<div className="widget-item">
-													<p className="widget-value">
-														{formatInterval(nextIntervalMs)}
-													</p>
-													<h4 className="widget-title">Next Interval</h4>
+													{reviewDelayMs > 1000 * 60 * 60 && (
+														<div className="widget-item">
+															<p className="widget-value">
+																{formatInterval(reviewDelayMs)}
+															</p>
+															<h4 className="widget-title">
+																Review Delay
+															</h4>
+														</div>
+													)}
 												</div>
-											)}
-											{reviewDelayMs > 1000 * 60 * 60 && (
-												<div className="widget-item">
-													<p className="widget-value">
-														{formatInterval(reviewDelayMs)}
-													</p>
-													<h4 className="widget-title">Review Delay</h4>
-												</div>
-											)}
-										</div>
-									</span>
+											</span>
+										)}
 								</div>
 							);
 						})}
 
-					{/* --- BONUS: Current Repetition Box --- */}
+					{/* BONUS: Current Repetition Box */}
 					{card.nextRepetitionTime && (
-						<div className="tooltip square square-current">
-							<span className="tooltiptext">
-								<div className="widget-container">
-									{/* Total Nr of Reviews */}
-									<div className="widget-item">
-										<p className="widget-value">{totalReviews}</p>
-										<h4 className="widget-title">Total Reviews</h4>
-									</div>
-									{/* Total Review Time */}
-									<div className="widget-item">
-										<p className="widget-value">
-											{`${Math.round(totalReviewTimeMs / (1000 * 60))} min`}
-										</p>
-										<h4 className="widget-title">Total Review Time</h4>
-									</div>
-									{/* Current Interval */}
-									{currentIntervalMs > 0 && (
-										<div className="widget-item">
-											<p className="widget-value">
-												{formatInterval(currentIntervalMs)}
-											</p>
-											<h4 className="widget-title">Current Interval</h4>
+						<div
+							className="tooltip square square-current"
+							onMouseEnter={() => setActiveTooltip('current')}
+							onMouseLeave={() => setActiveTooltip(null)}
+						>
+							{activeTooltip === 'current' &&
+								portal(
+									<span
+										className="tooltiptext"
+										style={{ visibility: 'visible', opacity: 1 }}
+									>
+										<div className="widget-container">
+											<div className="widget-item">
+												<p className="widget-value">{totalReviews}</p>
+												<h4 className="widget-title">Total Reviews</h4>
+											</div>
+											<div className="widget-item">
+												<p className="widget-value">
+													{`${Math.round(
+														totalReviewTimeMs / (1000 * 60)
+													)} min`}
+												</p>
+												<h4 className="widget-title">Total Review Time</h4>
+											</div>
+											{currentIntervalMs > 0 && (
+												<div className="widget-item">
+													<p className="widget-value">
+														{formatInterval(currentIntervalMs)}
+													</p>
+													<h4 className="widget-title">Current Interval</h4>
+												</div>
+											)}
+											<div className="widget-item">
+												<p className="widget-value">
+													{new Date(
+														card.nextRepetitionTime
+													).toLocaleDateString()}
+												</p>
+												<h4 className="widget-title">Scheduled Date</h4>
+											</div>
+											{currentDelayMs > 0 && (
+												<div className="widget-item">
+													<p className="widget-value">
+														{formatInterval(currentDelayMs)}
+													</p>
+													<h4 className="widget-title">Current Delay</h4>
+												</div>
+											)}
 										</div>
-									)}
-									{/* Scheduled Date */}
-									<div className="widget-item">
-										<p className="widget-value">
-											{new Date(
-												card.nextRepetitionTime
-											).toLocaleDateString()}
-										</p>
-										<h4 className="widget-title">Scheduled Date</h4>
-									</div>
-									{/* Current Delay */}
-									{currentDelayMs > 0 && (
-										<div className="widget-item">
-											<p className="widget-value">
-												{formatInterval(currentDelayMs)}
-											</p>
-											<h4 className="widget-title">Current Delay</h4>
-										</div>
-									)}
-								</div>
-							</span>
+									</span>
+								)}
 						</div>
 					)}
 				</div>
