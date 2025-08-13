@@ -30,9 +30,9 @@ enum Color {
 function scoreToStringClassMatch(score: number, pretty: boolean = false) {
 	const scoreToStringMap: { [key: number]: string } = {
 		[Score.Forgot]: 'Forgot',
-		[Score.RecalledWithEffort]: 'Recalled with Effort',
-		[Score.PartiallyRecalled]: 'Partially Recalled',
-		[Score.EasilyRecalled]: 'Easily Recalled',
+		[Score.RecalledWithEffort]: 'Good',
+		[Score.PartiallyRecalled]: 'Hard',
+		[Score.EasilyRecalled]: 'Easy',
 		[Score.Reset]: 'Reset',
 		[Score.TooEarly]: 'Too Early',
 		[Score.ViewedAsLeech]: 'Viewed as Leech',
