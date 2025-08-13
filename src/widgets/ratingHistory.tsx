@@ -104,17 +104,13 @@ function RatingHistoryWidget() {
 	const plugin = usePlugin();
 
 	const [loading, setLoading] = useState(true);
-	const inheritFromHighlightColors = useRunAsync(async () => {
-		const result = await plugin.settings.getSetting('inherit-from-highlight-colors');
-		return result;
-	}, []);
+	// NOTE: The 'inherit-from-highlight-colors' logic is commented out in the original code,
+	// so I'm omitting it here for clarity. You can add it back if you use it.
 
 	const repetitionHistory = useRunAsync(async () => {
 		const widgetContext = await plugin.widget.getWidgetContext<WidgetLocation.FlashcardUnder>();
-		const card = await plugin.card.findOne(widgetContext?.cardId);
-		if (!card) {
-			console.error('card not found');
-		}
+		if (!widgetContext?.cardId) return;
+		const card = await plugin.card.findOne(widgetContext.cardId);
 		return card?.repetitionHistory;
 	}, []);
 
@@ -132,43 +128,66 @@ function RatingHistoryWidget() {
 		<div id="legend-container">
 			<div id="legend">
 				<div id="squares">
-					{/* for each repetition history, build a square accordingly */}
-					{repetitionHistory.map((history) => {
-						// const className = inheritFromHighlightColors
-						// 	? scoreToColorClassMatch(history.score)
-						// 	: scoreToStringClassMatch(history.score);
-
+					{/* For each repetition history, build a square accordingly */}
+					{repetitionHistory.map((history, index, array) => {
 						const className = scoreToColorClassMatch(history.score);
+
+						// The next item in the history array.
+						const nextHistory = array[index + 1];
+
+						// Calculate review delay (only if it was scheduled).
+						const reviewDelayMs =
+							history.scheduled && history.date > history.scheduled
+								? history.date - history.scheduled
+								: 0;
 
 						return (
 							<div className={`tooltip square ${className}`} key={history.date}>
 								<span className="tooltiptext">
 									<div className="widget-container">
+										{/* Pressed Button */}
 										<div className="widget-item">
 											<p className="widget-value">
 												{scoreToStringClassMatch(history.score, true)}
 											</p>
 											<h4 className="widget-title">Pressed</h4>
 										</div>
+										{/* Response Time */}
 										<div className="widget-item">
 											<p className="widget-value">
 												{Math.round(history.responseTime / 1000)} seconds
 											</p>
 											<h4 className="widget-title">Response Time</h4>
 										</div>
+										{/* Practice Date */}
 										<div className="widget-item">
 											<p className="widget-value">
-												{new Date(history.date).toLocaleDateString()}
+												{new Date(history.date).toLocaleDateString(
+													undefined,
+													{ timeZone: 'UTC' }
+												)}
 											</p>
 											<h4 className="widget-title">Practice Date</h4>
 										</div>
-										{history.scheduled && (
-  											  <div className="widget-item">
-     											   <p className="widget-value">
-        										    {formatInterval(history.scheduled - history.date)}
-    											    </p>
-    								 			   <h4 className="widget-title">Next Interval</h4>
- 											   </div>
+										{/* --- CORRECTED "NEXT INTERVAL" LOGIC --- */}
+										{nextHistory && nextHistory.scheduled && (
+											<div className="widget-item">
+												<p className="widget-value">
+													{formatInterval(
+														nextHistory.scheduled - history.date
+													)}
+												</p>
+												<h4 className="widget-title">Next Interval</h4>
+											</div>
+										)}
+										{/* --- BONUS "REVIEW DELAY" LOGIC --- */}
+										{reviewDelayMs > 1000 * 60 * 60 && ( // Only show if delay > 1 hour
+											<div className="widget-item">
+												<p className="widget-value">
+													{formatInterval(reviewDelayMs)}
+												</p>
+												<h4 className="widget-title">Review Delay</h4>
+											</div>
 										)}
 									</div>
 								</span>
