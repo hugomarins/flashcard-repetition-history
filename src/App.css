@@ -18,13 +18,10 @@ body.dark {
 	width: 20px;
 	margin: 5px;
 	border-radius: 5px;
+	border: 2px solid transparent; /* ADD THIS to create a border on all squares */
 }
 
-/* Added from previous request */
-.square-current {
-	background-color: transparent !important;
-	border: 2px solid var(--rn-clr-content-secondary);
-}
+
 
 #legend {
 	background-color: var(--rn-clr-background-secondary);
@@ -127,6 +124,47 @@ body.dark {
 	font-weight: 600; /* REVISED: Slightly adjusted font-weight */
 	font-size: 16px; /* REVISED: Made value font smaller */
 	color: var(--rn-clr-content-primary);
+}
+
+/* Add these new rules to your app.css file */
+
+/* For visually distinguishing the current repetition square */
+.square-current-distinct {
+	box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+}
+
+/* Colors for the overdue status */
+.overdue-line-low {
+	border-color: #5b9bd5; /* Blue */
+}
+.overdue-line-medium {
+	border-color: #ffc000; /* Yellow */
+}
+.overdue-line-high {
+	border-color: #ed7d31; /* Orange */
+}
+.overdue-line-very-high {
+	border-color: #ff5c5c; /* Light Red */
+}
+.overdue-line-critical {
+	border-color: #c00000; /* Dark Red */
+}
+
+/* These classes are now for FILLING the current repetition square */
+.overdue-fill-low {
+	background-color: #5b9bd5; /* Blue */
+}
+.overdue-fill-medium {
+	background-color: #ffc000; /* Yellow */
+}
+.overdue-fill-high {
+	background-color: #ed7d31; /* Orange */
+}
+.overdue-fill-very-high {
+	background-color: #ff5c5c; /* Light Red */
+}
+.overdue-fill-critical {
+	background-color: #c00000; /* Dark Red */
 }
 
 
