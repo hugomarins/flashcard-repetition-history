@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-<img src="assets/simplemode.gif" alt="Simple Mode">
+<img src="https://raw.githubusercontent.com/coldenate/flashcard-repetition-history/main/assets/simplemode.gif" alt="Simple Mode">
 </p>
 
 ## 🤔 Why You Should Use This Plugin
@@ -29,7 +29,7 @@ To provide the best experience for everyone, this plugin operates in two modes, 
   * __Advanced Mode:__ Unlocks a powerful suite of analytics for users who want to dive deeper into their spaced repetition metrics. It reveals detailed statistics and new visual cues to help you truly understand your memory's behavior.
 
 <p align="center">
-<img src="assets/advancedmode.gif" alt="Advanced Mode">
+<img src="https://raw.githubusercontent.com/coldenate/flashcard-repetition-history/main/assets/advancedmode.gif" alt="Advanced Mode">
 </p>
 
 ## 🎨 How It Works: The Visuals
@@ -55,7 +55,7 @@ Overdueness is a measure of how late you are for a scheduled review. It's calcul
 
 ⚫ Dark Red Border: Critically overdue (e.g., more than 3x the interval).
 
-<img src="assets/overduebordercolors.png" alt="A legend showing the border colors for overdue flashcards" height="300">
+<img src="https://raw.githubusercontent.com/coldenate/flashcard-repetition-history/main/assets/overduebordercolors.png" alt="A legend showing the border colors for overdue flashcards" height="300">
 
 __A Quick Caveat:__ To avoid confusion, remember this simple rule:
 
