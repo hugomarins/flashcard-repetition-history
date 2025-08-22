@@ -98,3 +98,26 @@ div[data-widget-id='ratingHistory'] {
 .square-current-distinct {
 	box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
 }
+
+.square-separator {
+	height: 20px;
+	width: 0px; /* The element itself takes up no space */
+
+	/* Let's use a 2px border with a hard-coded light gray color.
+	This removes any dependency on RemNote's variables.
+	*/
+	border-left: 2px solid #bbbbbb;
+
+	/* This margin aligns the bar vertically and gives it space horizontally.
+	*/
+	margin: 5px 8px;
+}
+
+.tooltip-main-title {
+	grid-column: 1 / -1; /* This makes the title span all columns in the grid */
+	text-align: center;
+	margin-bottom: 10px;
+	font-size: 18px;
+	font-weight: bold;
+	color: var(--rn-clr-content-primary);
+}
