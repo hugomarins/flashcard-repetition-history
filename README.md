@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/coldenate/flashcard-repetition-history/main/assets/simplemode.gif" alt="Simple Mode">
+<img src="assets/simplemode.gif" alt="Simple Mode">
 </p>
 
 ## 🤔 Why You Should Use This Plugin
@@ -29,7 +29,7 @@ To provide the best experience for everyone, this plugin operates in two modes, 
   * __Advanced Mode:__ Unlocks a powerful suite of analytics for users who want to dive deeper into their spaced repetition metrics. It reveals detailed statistics and new visual cues to help you truly understand your memory's behavior.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/coldenate/flashcard-repetition-history/main/assets/advancedmode.gif" alt="Advanced Mode">
+<img src="assets/advancedmode.gif" alt="Advanced Mode">
 </p>
 
 ## 🎨 How It Works: The Visuals
