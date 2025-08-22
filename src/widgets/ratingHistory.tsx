@@ -440,10 +440,19 @@ function RatingHistoryWidget() {
 													</div>
 													<div className="widget-item">
 														<p className="widget-value">
+															{new Date(
+																card.nextRepetitionTime
+															).toLocaleDateString()}
+														</p>
+														<h4 className="widget-title">Scheduled Date</h4>
+													</div>
+													<div className="widget-item">
+														<p className="widget-value">
 															{formatInterval(currentNextIntervalMs)}
 														</p>
-														<h4 className="widget-title">Next Interval</h4>
+														<h4 className="widget-title">Last Interval</h4>
 													</div>
+													
 													<div className="widget-item">
 														<p className="widget-value">
 															{formatInterval(currentUsedIntervalMs)}
