@@ -150,7 +150,7 @@ function RatingHistoryWidget() {
 			'mode',
 			'grade-label-style',
 			'inherit-from-highlight-colors',
-			'show-overdue-borders', // Fetch the new setting
+			'show-overdue-borders',
 			'square-forgot-color',
 			'square-hard-color',
 			'square-good-color',
@@ -368,6 +368,13 @@ function RatingHistoryWidget() {
 							);
 						})}
 
+						{/* NEW: A separator bar that only appears if there is both a history and a current repetition. */}
+						{card.repetitionHistory && card.repetitionHistory.length > 0 && card.nextRepetitionTime && (
+							<div className="square-separator"></div>
+						)}
+
+						{/* CURRENT REPETITION BOX */}
+
 						{card.nextRepetitionTime && (
 							<div
 								className={`square square-current-distinct`}
@@ -386,6 +393,9 @@ function RatingHistoryWidget() {
 												mode === 'advanced' ? 'advanced-mode' : ''
 											}`}
 										>
+											{/* NEW: Title added to the tooltip for the current repetition. */}
+											<div className="tooltip-main-title">Totals & Current Repetition</div>
+											
 											{mode === 'simple' && (
 												<>
 													<div className="widget-item">
@@ -430,10 +440,19 @@ function RatingHistoryWidget() {
 													</div>
 													<div className="widget-item">
 														<p className="widget-value">
+															{new Date(
+																card.nextRepetitionTime
+															).toLocaleDateString()}
+														</p>
+														<h4 className="widget-title">Scheduled Date</h4>
+													</div>
+													<div className="widget-item">
+														<p className="widget-value">
 															{formatInterval(currentNextIntervalMs)}
 														</p>
-														<h4 className="widget-title">Next Interval</h4>
+														<h4 className="widget-title">Last Interval</h4>
 													</div>
+													
 													<div className="widget-item">
 														<p className="widget-value">
 															{formatInterval(currentUsedIntervalMs)}

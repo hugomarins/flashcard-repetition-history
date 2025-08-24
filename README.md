@@ -65,6 +65,14 @@ __A Quick Caveat:__ To avoid confusion, remember this simple rule:
 
 This allows you to spot interesting patterns. For example, do cards with red borders (reviewed late) also tend to have red fills (forgotten)? If so, it's a strong sign that punctuality is key for that topic!
 
+## The Final Square: Current Repetition State
+
+To the far right of the history, separated by a thin vertical bar, is a single square that represents the card's **current state**. Unlike the other squares, this one does not show a past review. Instead, it tells you about the review you are about to do.
+
+Its visual language is different:
+
+ * __Fill Color = Current Overdueness__: The fill color of this square is dedicated to showing how overdue the card is right now. It uses the same color scale as the overdue borders (Blue for on-time, progressing to Yellow, Orange, and Red for increasing lateness). This helps you see at a glance if you're on time for the current review.
+
 ## Hovering for Details: The Analytics
 Hovering over any square reveals a detailed breakdown of that review session.
 
@@ -93,6 +101,25 @@ Unlocks a full suite of SRS analytics:
 * __Overdue Ratio:__ (Used Interval / Old Calculated Interval) shown as a percentage.
 
 * __U-Factor (Used Interval Increase):__ A powerful metric that shows how much the __New Interval__ you got after rating the card grew compared to the __last Used Interval__ (time between your previous repetition and that specific repetition).
+
+### The Current Repetition Tooltip
+
+Hovering over the final, separated square provides a summary of the card's entire history and its current scheduling status.
+
+ * __Total Reviews:__ The total number of times you have reviewed the card.
+
+ * __Total Review Time:__ The cumulative time spent reviewing the card.
+
+ * __Scheduled Date:__ The date in which you were supposed to be doing the current repetition.
+
+ * __Last Interval :__ (Advanced Mode Only) The interval that was scheduled after your last review.
+
+ * __Used Interval:__ (Advanced Mode Only) The time that has actually passed since your last review.
+
+ * __Overdue Ratio:__ (Advanced Mode Only) A percentage showing how overdue the card currently is.
+
+ * __Current Delay:__ The amount of time that has passed since the card's scheduled review date.
+
 
 #### Deep Dive: What is U-Factor?
 
@@ -128,11 +155,13 @@ This plugin is highly customizable via the ```Settings > Plugin Settings``` menu
 
  1. __Display Mode:__ Switch between the __Simple__ and __Advanced__ UI.
 
- 2. __Display Grade Names As:__ Choose between default RemNote labels ("Recalled with Effort") or shorter, Anki-style labels ("Good").
+ 2. __Show Overdue Borders:__ If you are in _Advanced_ UI, you can choose if you will have fill colors and border colors showing different information. If you think it brings confusion, you can disable the overdue borders, while retaining the enhanced tooltips of the Advanced UI.
 
- 3. __Inherit Square Colors:__ If enabled, the fill color of the squares will match your RemNote theme's highlight colors. If disabled, you can set your own custom colors.
+ 3. __Display Grade Names As:__ Choose between default RemNote labels ("Recalled with Effort") or shorter, Anki-style labels ("Good").
 
- 4. __Custom Colors:__ In the settings, you can customize all fill colors and the overdue border colors to your liking.
+ 4. __Inherit Square Colors:__ If enabled, the fill color of the squares will match your RemNote theme's highlight colors. If disabled, you can set your own custom colors.
+
+ 5. __Custom Colors:__ In the settings, you can customize all fill colors and the overdue border colors to your liking.
 
 ## Glossary of Terms
 | Term | Definition |
@@ -147,7 +176,7 @@ This plugin is highly customizable via the ```Settings > Plugin Settings``` menu
 
 ## 🚧 Known Issues
  * In __multi-line cards__, where RemNote now stores sub-card info (a specific schedule record for each sub-item), the row of squares becomes somewhat cluttered and maybe not as meaningful.
- * When used with the __Incremental Everything plugin__, the history widget may be hidden on the back of the card after pressing "Show Answer." This is due to a plugin conflict that we are working to resolve.
+ * When used with the __Incremental Everything plugin__, the history widget may be hidden on the back of the card after pressing "Show Answer." This is due to a plugin conflict that we are working to resolve (we already posted a Pull Request to Incremental Everything GitHub repo that will solve this).
 
 <p align="center">
 📆 Copyright &copy; 2023 <a href="https://github.com/coldenate" target="_blank">coldenate / Nathan Solis</a>
