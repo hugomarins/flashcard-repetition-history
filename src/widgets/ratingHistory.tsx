@@ -109,7 +109,7 @@ function formatInterval(ms: number): string {
 
 // Returns a border color HEX code from settings based on the overdue ratio
 function getOverdueBorderColor(ratio: number, settings: Record<string, unknown>): string {
-	if (ratio <= 1) return 'transparent';
+	if (ratio <= 1.1) return 'transparent';
 	if (ratio < 1.3) return getSetting(settings, 'border-color-low', '#8cb9de');
 	if (ratio < 1.6) return getSetting(settings, 'border-color-medium', '#f9d56e');
 	if (ratio < 2.0) return getSetting(settings, 'border-color-high', '#f2a65a');
@@ -119,7 +119,6 @@ function getOverdueBorderColor(ratio: number, settings: Record<string, unknown>)
 
 // Returns a fill color HEX code from settings based on the overdue ratio
 function getOverdueFillColor(ratio: number, settings: Record<string, unknown>): string {
-	if (ratio <= 1) return getSetting(settings, 'border-color-low', '#8cb9de');
 	if (ratio < 1.3) return getSetting(settings, 'border-color-low', '#8cb9de');
 	if (ratio < 1.6) return getSetting(settings, 'border-color-medium', '#f9d56e');
 	if (ratio < 2.0) return getSetting(settings, 'border-color-high', '#f2a65a');
