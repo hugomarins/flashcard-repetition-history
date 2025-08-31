@@ -10,7 +10,7 @@ async function onActivate(plugin: ReactRNPlugin) {
 	await plugin.app.registerWidget('ratingHistory', WidgetLocation.FlashcardUnder, {
 		dimensions: {
 			width: '100%',
-			height: '25rem',
+			height: '18rem',
 		},
 	});
 
